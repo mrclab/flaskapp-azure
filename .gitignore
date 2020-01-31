@@ -108,3 +108,5 @@ settings.json
 
 Pipfile
 Pipfile.lock
+
+.vscode
