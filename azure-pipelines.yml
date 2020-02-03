@@ -7,7 +7,7 @@ trigger:
 - master
 
 stages:
-- stages: 'Build'
+- stage: 'Build'
   displayName: 'Build the web application'
   jobs:
   - job: 'Build'
@@ -52,7 +52,7 @@ stages:
   - deployment: Deploy
     pool:
       vmImage: 'ubuntu-latest'
-    enviroment: dev
+    environment: dev
     variables:
       - group: 'flask-app'
     strategy:
