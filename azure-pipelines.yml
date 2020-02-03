@@ -6,31 +6,74 @@
 trigger:
 - master
 
-pool:
-  vmImage: 'ubuntu-latest'
-strategy:
-  matrix:
-    Python27:
-      python.version: '2.7'
-    Python35:
-      python.version: '3.5'
-    Python36:
-      python.version: '3.6'
-    Python37:
-      python.version: '3.7'
+stages:
+- stages: 'Build'
+  displayName: 'Build the web application'
+  jobs:
+  - job: 'Build'
+    displayName: 'Build Job'
+    pool:
+      vmImage: 'ubuntu-latest'
+    strategy:
+      matrix:
+       Python37:
+         python.version: '3.7'
+    
+    steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '$(python.version)'
+      displayName: 'Use Python $(python.version)'
 
-steps:
-- task: UsePythonVersion@0
-  inputs:
-    versionSpec: '$(python.version)'
-  displayName: 'Use Python $(python.version)'
+    - script: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+      displayName: 'Install dependencies'
 
-- script: |
-    python -m pip install --upgrade pip
-    pip install -r requirements.txt
-  displayName: 'Install dependencies'
+    - script: |
+        pip install pytest pytest-azurepipelines
+        pytest
+      displayName: 'pytest'
 
-- script: |
-    pip install pytest pytest-azurepipelines
-    pytest
-  displayName: 'pytest'
+    - tasks: ArchiveFiles@2
+      inputs:
+        rootFolderOrFile: '$(Build.SourcesDirectory)'
+        includeRootFolder: false
+        archiveType: 'zip'
+        achiveFile: '$(Build.ArtifactStagingDirectory)/Application$(Build.BuildId).zip'
+        replaceExistingArchive: true
+    - publish: '$(Build.ArtifactStagingDirectory)/Application$(Build.BuildId).zip'
+      displayName: 'Upload package'
+      artifact: drop
+- stage: 'Dev'
+  displayName: 'Deploy to the dev enviroment'
+  dependsOn: Build
+  jobs:
+  - deployment: Deploy
+    pool:
+      vmImage: 'ubuntu-latest'
+    enviroment: dev
+    variables:
+      - group: 'flask-app'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '$(python.version)'
+            displayName: 'Use python version'
+
+          - task: AzureWebApp@1
+            displayName: 'deploy to azure web app'
+            inputs:
+              azureSubscription: 'flask-app-service-connection'
+              appName: $(WebAppNameDev)
+              package: '$(Build.ArtifactStagingDirectory)/Application$(Build.BuildId).zip'
+
+              startUpCommand: 'gunicorn --bind=0.0.0.0 --workers=4 startup:app'
+
+
+
+
