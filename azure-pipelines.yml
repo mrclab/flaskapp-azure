@@ -40,10 +40,11 @@ stages:
         rootFolderOrFile: '$(Build.SourcesDirectory)'
         includeRootFolder: false
         archiveType: 'zip'
-        achiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+        achiveFile: '$(Build.ArtifactStagingDirectory)/Application$(Build.BuildId).zip'
         replaceExistingArchive: true
 
     - publish: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+      displayName: 'Upload package'
       artifact: drop
 
 - stage: 'Dev'
@@ -62,6 +63,12 @@ stages:
           steps:
           - download: current
             artifact: drop
+
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '3.7'
+            displayName: 'Use Python version'
+
           - task: AzureWebApp@1
             displayName: 'deploy to azure web app'
             inputs:
@@ -69,7 +76,7 @@ stages:
               appName: $(WebAppNameDev)
               package: '$(Build.ArtifactStagingDirectory)/drop/$(Build.BuildId).zip'
 
-              startUpCommand: 'gunicorn --bind=0.0.0.0 --workers=4 startup'
+              startUpCommand: 'gunicorn --bind=0.0.0.0 --workers=4 startup:app'
 
 
 
