@@ -67,7 +67,7 @@ stages:
             inputs:
               azureSubscription: 'flask-app-service-connection'
               appName: $(WebAppNameDev)
-              package: '$(Build.ArtifactStagingDirectory)/drop/*.zip'
+              package: '$(Build.ArtifactStagingDirectory)/*.zip'
 
               startUpCommand: 'gunicorn --bind=0.0.0.0 --workers=4 startup'
 
