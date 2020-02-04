@@ -51,9 +51,9 @@ stages:
         achiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
         replaceExistingArchive: true
 
-    - publish: '$(Build.ArtifactStagingDirectory)'
-      displayName: 'Upload package'
-      artifact: drop
+    # - publish: '$(Build.ArtifactStagingDirectory)'
+    #   displayName: 'Upload package'
+    #   artifact: drop
 
     - task: PublishBuildArtifacts@1
       inputs:
