@@ -16,8 +16,8 @@ stages:
       vmImage: 'ubuntu-latest'
     strategy:
       matrix:
-       Python37:
-         python.version: '3.7'
+       Python36:
+         python.version: '3.6'
     
     steps:
     - task: UsePythonVersion@0
@@ -79,7 +79,7 @@ stages:
 
           - task: UsePythonVersion@0
             inputs:
-              versionSpec: '3.7'
+              versionSpec: '3.6'
             displayName: 'Use Python version'
 
           - task: AzureWebApp@1
@@ -88,9 +88,3 @@ stages:
               azureSubscription: 'flask-app-service-connection'
               appName: $(WebAppNameDev)
               package: '$(Build.ArtifactStagingDirectory)'
-
-              startUpCommand: 'gunicorn --bind=0.0.0.0 --workers=4 startup:app'
-
-
-
-
