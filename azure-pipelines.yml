@@ -82,4 +82,4 @@ stages:
               azureSubscription: 'flask-app-connection'
               appName: $(WebAppNameDev)
               package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
-              startUpCommand: 'gunicorn --bind=0.0.0.0 --workers=4 app:app'
+              startUpCommand: 'gunicorn --bind=0.0.0.0 --timeout 600 app:app'
