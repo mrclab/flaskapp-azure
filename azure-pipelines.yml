@@ -85,6 +85,6 @@ stages:
           - task: AzureWebApp@1
             displayName: 'deploy to azure web app'
             inputs:
-              azureSubscription: 'flask-app-service-connection'
+              azureSubscription: 'flask-app-connection'
               appName: $(WebAppNameDev)
               package: '$(Build.ArtifactStagingDirectory)'
