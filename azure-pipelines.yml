@@ -79,7 +79,6 @@ stages:
           - task: AzureWebApp@1
             displayName: 'deploy to azure web app'
             inputs:
-              azureSubscription: 'flask-app-connection'
+              azureSubscription: 'flask-app-service-connection'
               appName: $(WebAppNameDev)
               package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
-              startUpCommand: 'gunicorn --bind=0.0.0.0 --timeout 600 app:app'
