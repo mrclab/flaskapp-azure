@@ -48,10 +48,10 @@ stages:
         rootFolderOrFile: '$(Build.SourcesDirectory)'
         includeRootFolder: false
         archiveType: 'zip'
-        achiveFile: '$(Build.ArtifactStagingDirectory)/Application$(Build.BuildId).zip'
+        achiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
         replaceExistingArchive: true
 
-    - publish: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+    - publish: '$(Build.ArtifactStagingDirectory)'
       displayName: 'Upload package'
       artifact: drop
 
@@ -82,7 +82,7 @@ stages:
             inputs:
               azureSubscription: 'flask-app-service-connection'
               appName: $(WebAppNameDev)
-              package: '$(Build.ArtifactStagingDirectory)/drop/$(Build.BuildId).zip'
+              package: '$(Build.ArtifactStagingDirectory)/drop/*.zip'
 
               startUpCommand: 'gunicorn --bind=0.0.0.0 --workers=4 startup:app'
 
